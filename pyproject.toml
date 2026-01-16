@@ -1,0 +1,71 @@
+[build-system]
+requires = ["hatchling==1.26.3"]
+build-backend = "hatchling.build"
+
+[project]
+name = "benchkitv2"
+version = "0.1.0"
+description = "Minimal scaffold for an EEG visualization benchmarking suite."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+  { name = "Your Name" }
+]
+keywords = ["eeg", "benchmark", "visualization"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
+
+dependencies = []
+
+[project.optional-dependencies]
+core = [
+  "numpy==2.1.4",
+  "pandas==2.2.3",
+]
+desktop = [
+  "pyqtgraph==0.13.7",
+  "PyQt6==6.7.1",
+  "vispy==0.14.3",
+  "mne==1.7.1",
+  "matplotlib==3.9.2",
+  "fastplotlib==0.6.0",
+]
+web = [
+  "plotly==5.24.1",
+  "playwright==1.47.0",
+]
+io = [
+  "pyedflib==0.1.38",
+  "pynwb==2.8.2",
+  "neo==0.13.2",
+  "h5py==3.12.1",
+]
+all = [
+  "numpy==2.1.4",
+  "pandas==2.2.3",
+  "pyqtgraph==0.13.7",
+  "PyQt6==6.7.1",
+  "vispy==0.14.3",
+  "mne==1.7.1",
+  "matplotlib==3.9.2",
+  "fastplotlib==0.6.0",
+  "plotly==5.24.1",
+  "playwright==1.47.0",
+  "pyedflib==0.1.38",
+  "pynwb==2.8.2",
+  "neo==0.13.2",
+  "h5py==3.12.1",
+]
+
+[project.scripts]
+benchkitv2 = "benchkitv2.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/benchkitv2"]
