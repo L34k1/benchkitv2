@@ -26,7 +26,7 @@ dependencies = []
 
 [project.optional-dependencies]
 core = [
-  "numpy==2.1.4",
+  "numpy==2.2.6",
   "pandas==2.2.3",
 ]
 desktop = [
@@ -34,6 +34,7 @@ desktop = [
   "PyQt6==6.7.1",
   "vispy==0.14.3",
   "mne==1.7.1",
+  "scipy<1.13",
   "matplotlib==3.9.2",
   "fastplotlib==0.6.0",
 ]
@@ -48,12 +49,13 @@ io = [
   "h5py==3.12.1",
 ]
 all = [
-  "numpy==2.1.4",
+  "numpy==2.2.6",
   "pandas==2.2.3",
   "pyqtgraph==0.13.7",
   "PyQt6==6.7.1",
   "vispy==0.14.3",
   "mne==1.7.1",
+  "scipy<1.13",
   "matplotlib==3.9.2",
   "fastplotlib==0.6.0",
   "plotly==5.24.1",

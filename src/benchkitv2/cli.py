@@ -3,11 +3,15 @@
 from __future__ import annotations
 
 import argparse
+from pathlib import Path
 from typing import Iterable
+
+from benchkitv2.runner import run_all
+from benchkitv2.web_console import collect_html_console
 
 DEPENDENCY_PROFILES = {
     "core": [
-        "numpy==2.1.4",
+        "numpy==2.2.6",
         "pandas==2.2.3",
     ],
     "desktop": [
@@ -49,6 +53,19 @@ def build_parser() -> argparse.ArgumentParser:
 
     subparsers.add_parser("hello", help="Print a friendly greeting.")
     subparsers.add_parser("deps", help="List dependency profiles.")
+    run_parser = subparsers.add_parser("run", help="Run quick benchmarks for all techs.")
+    run_parser.add_argument("--out-root", type=Path, default=Path("outputs"))
+    run_parser.add_argument("--techs", nargs="+", default=["all"])
+    run_parser.add_argument("--timeout-ms", type=int, default=8000)
+    run_parser.add_argument("--data-dir", type=Path, default=Path("data"))
+
+    collect_parser = subparsers.add_parser(
+        "collect-html", help="Collect BENCH_JSON from HTML and write CSV."
+    )
+    collect_parser.add_argument("--html", type=Path, required=True)
+    collect_parser.add_argument("--out-json", type=Path, default=None)
+    collect_parser.add_argument("--out-csv", type=Path, default=None)
+    collect_parser.add_argument("--timeout-ms", type=int, default=8000)
     return parser
 
 
@@ -66,6 +83,17 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "deps":
         print(_format_profiles(DEPENDENCY_PROFILES))
+        return 0
+    if args.command == "run":
+        run_all(args.out_root, args.techs, args.timeout_ms, data_dir=args.data_dir)
+        return 0
+    if args.command == "collect-html":
+        collect_html_console(
+            args.html,
+            out_json=args.out_json,
+            out_csv=args.out_csv,
+            timeout_ms=args.timeout_ms,
+        )
         return 0
 
     parser.print_help()

@@ -1,0 +1,56 @@
+Benchkit pipeline overview
+
+1) Input data
+- Source files live under data/ (e.g., synthetic EDF/NWB used by desktop and web benches).
+- Bench runners load segments and metadata (e.g., sampling rate, channels) from these files.
+
+2) Bench execution
+- Bench scripts in scripts/desktop and scripts/web run specific tools/bench phases:
+  - TFFR (time to first render)
+  - A1_THROUGHPUT
+  - A2_CADENCED
+  - IO (I/O throughput)
+- run_all.py orchestrates tool/bench combinations and writes outputs per run.
+
+3) Per-run outputs (raw)
+- Each run writes to outputs/<BENCH_ID>/<TOOL_ID>/<tag>/
+  - manifest.json: run metadata (tool, version, params, system info, etc.).
+  - steps.csv: per-step measurements (if the bench emits step-level data).
+  - tffr.csv: TFFR measurements (for TFFR bench).
+  - summary.json: run-level summary metrics.
+  - *summary*.csv: any additional summary CSVs produced by specific tools.
+
+4) Merge all outputs (optional but useful for inspection)
+- scripts/merge_outputs_csv.py scans outputs/**/manifest.json and merges:
+  - steps.csv   -> outputs/_orchestration/steps_merged.csv
+  - tffr.csv    -> outputs/_orchestration/tffr_merged.csv
+  - *summary*.csv -> outputs/_orchestration/summary_csv_merged.csv
+  - summary.json  -> outputs/_orchestration/summary_json_merged.csv
+
+5) Unify outputs into analysis-ready CSVs
+- scripts/analysis/unify_outputs_csv.py normalizes per-run data into a consistent schema.
+- It produces one CSV per tool per bench in outputs/_aggregate/unified:
+  - <TOOL_ID>_<BENCH_ID>.csv
+- Each unified CSV contains:
+  - per-step rows (step_id >= 0)
+  - a summary row per run (step_id = -1)
+
+6) Aggregate by tool and phase
+- scripts/analysis/aggregate_by_tool_phase.py reads unified CSVs and computes
+  summary statistics per tool per phase (A1_THROUGHPUT, A2_CADENCED):
+  - outputs/_aggregate/by_tool_phase/<TOOL_ID>_<BENCH_ID>_aggregate.csv
+- It also writes a combined file with all tools/phases:
+  - outputs/_aggregate/by_tool_phase/all_tools_by_phase.csv
+
+7) One-command path
+- run_all.bat
+  - installs deps
+  - runs run_all.py
+  - unifies outputs for IO/TFFR/A1_THROUGHPUT/A2_CADENCED
+  - aggregates by tool/phase
+
+Result files for analysis
+- outputs/_aggregate/unified/*.csv (normalized per-tool/bench)
+- outputs/_aggregate/by_tool_phase/*.csv (aggregated per-tool/phase)
+- outputs/_aggregate/by_tool_phase/all_tools_by_phase.csv (combined)
+- outputs/_orchestration/*_merged.csv (optional merged raw view)

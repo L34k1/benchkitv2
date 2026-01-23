@@ -1,0 +1,17 @@
+{
+  "name": "benchkitv2",
+  "version": "1.0.0",
+  "description": "A minimal, runnable Python CLI scaffold for an EEG visualization benchmarking suite.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^25.0.9"
+  }
+}

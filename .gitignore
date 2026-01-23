@@ -21,3 +21,21 @@ htmlcov/
 .ipynb_checkpoints/
 .vscode/
 .DS_Store
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+
+# Local data + outputs
+data/**
+!data/README.md
+outputs/
+out/
+out/figures/
+out/matrices/
+smoke_check_*.log
+.venv.bak-*/

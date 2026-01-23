@@ -1,0 +1,12 @@
+numpy
+pandas
+pyedflib
+neo
+pynwb
+vispy
+pyqtgraph
+PyQt5
+datoviz
+mne
+fastplotlib
+glfw
