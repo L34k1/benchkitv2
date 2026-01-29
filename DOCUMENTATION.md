@@ -130,7 +130,8 @@ Defaults in `run_all.py`:
 `--load-duration-multiplier` defaults to 10.0 (load window = window * 10).
 
 ### Tools
-`--tools all` runs all tools except Plotly by default. Plotly must be explicitly requested.
+`--tools all` runs all tools by default, including Plotly. Plotly uses the CDN by default; install
+`plotly` if you want a local bundle.
 
 ### Job tagging
 A unique tag is generated per job based on:
@@ -315,7 +316,7 @@ To add a new visualization tool or benchmark:
 
 - GUI stacks require an active display environment.
 - GPU/OpenGL backends can be fragile on Windows depending on drivers and runtime.
-- Plotly is excluded from the default `--tools all` set; pass it explicitly.
+- Plotly uses the CDN by default; install `plotly` if you want to bundle `plotly.min.js` locally.
 - Playwright must be installed and browsers installed for web collectors.
 - Some tools allow skipping via `BENCHKIT_SKIP_TOOLS`.
 

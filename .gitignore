@@ -10,6 +10,9 @@ build/
 dist/
 .venv/
 .env/
+.env.local
+.env.*.local
+.python-version
 .pytest_cache/
 .coverage
 .coverage.*
@@ -39,3 +42,4 @@ out/figures/
 out/matrices/
 smoke_check_*.log
 .venv.bak-*/
+extra/

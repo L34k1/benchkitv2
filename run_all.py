@@ -440,6 +440,17 @@ def build_tools() -> Dict[str, ToolConfig]:
             },
             kind="desktop",
         ),
+        TOOL_PLOTLY: ToolConfig(
+            tool_id=TOOL_PLOTLY,
+            benches=(BENCH_TFFR, BENCH_A1, BENCH_A2),
+            formats=(FMT_EDF, FMT_NWB),
+            scripts={
+                BENCH_TFFR: REPO_ROOT / "scripts" / "web" / "gen_plotly_html_v2.py",
+                BENCH_A1: REPO_ROOT / "scripts" / "web" / "gen_plotly_html_v2.py",
+                BENCH_A2: REPO_ROOT / "scripts" / "web" / "gen_plotly_html_v2.py",
+            },
+            kind="web",
+        ),
         TOOL_D3: ToolConfig(
             tool_id=TOOL_D3,
             benches=(BENCH_TFFR, BENCH_A1, BENCH_A2),
@@ -644,7 +655,7 @@ def main() -> int:
     logger.addHandler(console)
 
     tools = build_tools()
-    default_tools = [tool for tool in tools.keys() if tool != TOOL_PLOTLY]
+    default_tools = list(tools.keys())
     selected_tools = default_tools if args.tools == ["all"] else args.tools
 
     if args.max_parallel > 1:

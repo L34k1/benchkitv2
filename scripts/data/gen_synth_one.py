@@ -133,7 +133,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Generate a single synthetic EDF/NWB file.")
     parser.add_argument("--format", choices=["EDF", "NWB"], required=True)
     parser.add_argument("--n-ch", type=int, default=8)
-    parser.add_argument("--duration-s", type=int, default=60)
+    parser.add_argument("--duration-s", type=int, default=18000)
     parser.add_argument("--fs-hz", type=float, default=250.0)
     parser.add_argument("--seed", type=int, default=1337)
     parser.add_argument("--out-dir", type=Path, default=REPO_ROOT / "data" / "_synth")

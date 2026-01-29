@@ -93,15 +93,8 @@ Example (desktop only, 1 run):
 python run_all.py --data-dir data --out-root outputs --modes TFFR A1 A2 --tools VIS_PYQTGRAPH VIS_VISPY
 ```
 
-Plotly is intentionally excluded from the default `--tools all` set. To run Plotly, pass it
-explicitly:
-
-```bash
-python run_all.py --tools VIS_PLOTLY
-```
-
-Plotly benches require `plotly` installed (it is not in `requirements-web.txt`), so install it
-separately or via `pip install -e ".[web]"`.
+Plotly benches use the CDN by default; install `plotly` if you want to bundle `plotly.min.js`
+locally. `--tools all` includes Plotly by default.
 
 ### Smoke scripts
 

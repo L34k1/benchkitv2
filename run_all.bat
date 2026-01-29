@@ -16,7 +16,7 @@ if exist "scripts\web\requirements-web.txt" (
   "%PYTHON%" -m playwright install chromium
 )
 
-"%PYTHON%" run_all.py --runs 1 %*
+"%PYTHON%" run_all.py --runs 1 --tools all %*
 set "EXITCODE=%ERRORLEVEL%"
 
 if "%EXITCODE%"=="0" (
