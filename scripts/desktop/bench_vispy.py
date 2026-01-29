@@ -193,6 +193,15 @@ class VispyBench:
 
     def show_and_start(self) -> None:
         self.canvas.show()
+        # Ensure a redraw is requested even without user input.
+        self.canvas.update()
+        native = getattr(self.canvas, "native", None)
+        if native is not None:
+            # Try to bring the window to front so the backend paints immediately.
+            if hasattr(native, "activateWindow"):
+                native.activateWindow()
+            if hasattr(native, "setFocus"):
+                native.setFocus()
         # keep consistent with existing TFFR script style: start timing right after show()
         self._t0_s = time.perf_counter()
 
@@ -378,18 +387,6 @@ def run_interactions_one(
         if next_step["idx"] >= len(ranges) and not pending:
             done["flag"] = True
 
-    # A2 issuance timer
-    timer = {"obj": None}
-
-    def on_timer(ev=None) -> None:
-        if next_step["idx"] >= len(ranges):
-            # stop issuing
-            if timer["obj"] is not None:
-                timer["obj"].stop()
-            return
-        issue_one(next_step["idx"])
-        next_step["idx"] += 1
-
     # Draw callback: treat the latest pending command as presented
     def on_draw() -> None:
         if not pending:
@@ -447,44 +444,51 @@ def run_interactions_one(
 
     bench.set_draw_callback(on_draw)
 
-    # Drive the event loop with timers so updates run even when the window has focus.
+    # Drive the event loop with a timer and native app.run() so updates occur without user input.
     hard_timeout = float(args.hard_timeout_s)
     loop_start = time.perf_counter()
     started = {"flag": False}
+    pump_timer = {"obj": None}
 
     def pump(ev=None) -> None:
         if done["flag"]:
-            if timer["obj"] is not None:
-                timer["obj"].stop()
+            if pump_timer["obj"] is not None:
+                pump_timer["obj"].stop()
             bench.close()
             visapp.quit()
             return
 
-        if (time.perf_counter() - loop_start) > hard_timeout:
+        now = time.perf_counter()
+        if (now - loop_start) > hard_timeout:
             done["flag"] = True
-            if timer["obj"] is not None:
-                timer["obj"].stop()
+            if pump_timer["obj"] is not None:
+                pump_timer["obj"].stop()
             bench.close()
             visapp.quit()
             return
 
-        # Wait for the first draw before issuing commands.
-        if bench.tffr_s is None:
-            return
+        if not started["flag"]:
+            started["flag"] = True
+            if bench_id == BENCH_A1:
+                next_step["idx"] = 0
+                issue_one(0)
+                next_step["idx"] = 1
+            else:
+                next_step["idx"] = 0
 
-        if started["flag"]:
-            return
-        started["flag"] = True
+        if bench_id == BENCH_A2:
+            # Issue any commands that are due at this time (no wait for first draw).
+            while next_step["idx"] < len(ranges):
+                sched = t_start + (next_step["idx"] * interval_s)
+                if now + eps < sched:
+                    break
+                issue_one(next_step["idx"])
+                next_step["idx"] += 1
 
-        if bench_id == BENCH_A1:
-            next_step["idx"] = 0
-            issue_one(0)
-            next_step["idx"] = 1
-        else:
-            next_step["idx"] = 0
-            timer["obj"] = visapp.Timer(interval=interval_s, connect=on_timer, start=True)
+        bench.canvas.update()
+        finish_if_done()
 
-    pump_timer = visapp.Timer(interval=0.01, connect=pump, start=True)
+    pump_timer["obj"] = visapp.Timer(interval=0.01, connect=pump, start=True)
     visapp.run()
 
     if pending:
